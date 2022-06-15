@@ -8,14 +8,14 @@ kv = '''
 <TwoButtons>:
 # This class is used as the viewclass in the RecycleView
 # The means this widget will be instanced to view one element of data from the data list.
-# The RecycleView data list is a list of dictionaries.  The keys in the dictionary specify the 
+# The RecycleView data list is a list of dictionaries.  The keys in the dictionary specify the
 # attributes of the widget.
     Button:
         text: root.left_text
-        on_release: print(f'Button {self.text} pressed') 
+        on_release: print(f'Button {self.text} pressed')
     Button:
         text: root.right_text
-        on_release: print(f'Button {self.text} pressed') 
+        on_release: print(f'Button {self.text} pressed')
 
 BoxLayout:
     orientation: 'vertical'
@@ -31,7 +31,7 @@ BoxLayout:
         data: self.rv_data_list  # the data is a list of dicts defined below in the RV class.
         scroll_type: ['bars', 'content']
         bar_width: 10
-        RecycleBoxLayout:        
+        RecycleBoxLayout:
             # This layout is used to hold the Recycle widgets
             default_size: None, dp(48)   # This sets the height of the BoxLayout that holds a TwoButtons instance.
             default_size_hint: 1, None
