@@ -43,7 +43,7 @@ from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 
-verbose = 0
+verbose = 2
 for argI in range(1, len(sys.argv)):
     arg = sys.argv[argI]
     if arg.startswith("--"):
@@ -179,7 +179,7 @@ class ShoppingCartApp(App):
         super().__init__(**kwargs)
 
     def generate_key(self):
-        result = self.next_key_i
+        result = str(self.next_key_i)
         echo2("* generate_key {}".format(result))
         self.next_key_i += 1
         return result
