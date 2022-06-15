@@ -87,7 +87,7 @@ class ItemRow(BoxLayout):
         # ^ doesn't help, because __init__ is never called
         self.orientation = "horizontal"
         echo1("    - building ItemRow")
-        label = Label(text=self.key)
+        label = Label(color=(0,0,0,1))
         self.label = label
         self.add_widget(label)
 
@@ -104,12 +104,16 @@ class ItemRow(BoxLayout):
         echo2("* add_data")
         Clock.schedule_once(self._add_data, .2)
 
-    def _add_data(self, _):
+    def on_key(self, itemrow, value):
+        self.label.text = value
+
+    def _add_data(self, button):
         app = App.get_running_app()
         new_key = app.generate_key()
         entry = {
             'key': new_key,
         }
+        self.key = new_key
         app.rv.rv_data.append(entry)
 
 
