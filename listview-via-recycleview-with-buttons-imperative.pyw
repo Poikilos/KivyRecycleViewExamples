@@ -73,13 +73,15 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
     key = StringProperty()
 
     def __init__(self, **kwargs):
+        # ^ kwargs=={} by default, and self.key is "" at this point.
         super().__init__(**kwargs)
         # RecycleDataViewBehavior.__init__(**kwargs)
         # BoxLayout.__init__(**kwargs)
         # ^ doesn't help, because __init__ is never called
         self.orientation = "horizontal"
         print("    - building ItemRow")
-        label = Label(text=self.key)
+
+        label = Label(color=(0, 0, 0, 1))
         self.label = label
         self.add_widget(label)
 
@@ -92,12 +94,16 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         self.button = button
         self.add_widget(button)
 
-    def add_data(self, _):
+    def on_key(self, itemrow, value):
+        self.label.text = self.key
+
+    def add_data(self, button):
         app = App.get_running_app()
         new_key = app.generate_key()
         entry = {
             'key': new_key,
         }
+        self.key = new_key
         app.rv.data.append(entry)
 
 
@@ -132,6 +138,7 @@ class ItemScreen(Screen):
         #   ScreenManager, so look there for the event though):
         self.canvas.before.add(self.bgColor)
         self.canvas.before.add(self.bgRect)
+
 
     def custom_on_size(self):
         echo2("* ItemScreen custom_on_size")
