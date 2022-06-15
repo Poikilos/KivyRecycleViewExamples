@@ -245,14 +245,17 @@ class HybridRowsApp(App):
         """
         self.screen.on_size()
 
-        echo1("* adding more test data")
-        key = self.generate_key()
+        # echo1("* adding more test data")
+        # key = self.generate_key()
         # self.sm.screen.rv_data.append({'key':key})
         # ^ Appending to self.sm.screen.rv_data has no effect
         #   (but does during build)!
-        echo1("* adding bad test data")
-        self.rv.data.append({'key':"bad"})
-        echo1("len(self.rv.data): {}".format(len(self.rv.data)))
+
+        # echo1("* adding bad test data")
+        # self.rv.data.append({'key':"bad"})
+        # echo1("len(self.rv.data): {}".format(len(self.rv.data)))
+        # ^ Don't use rv.data directly! It will be overwritten by
+        #   self.rv.rv_data
 
     def build(self):
         """
@@ -359,16 +362,10 @@ class HybridRowsApp(App):
         #   'minimum_height'
         # rv_layout.spacing = dp(5)
 
-        """
-        sm.add_widget(screen)
-        """
         screen.add_widget(rv)
         rv.add_widget(rv_layout)
 
         Clock.schedule_once(self.fix_size, .1)
-        """
-        return sm
-        """
         return screen
         # return Builder.load_string(kv)
 
