@@ -37,6 +37,7 @@ class ItemScreen(Screen):
         # ^ NOTE: Change rect size to screen,
         #   but on_size only occurs for ScreenManager not Screen.
 
+
 class ItemScreens(ScreenManager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -45,10 +46,10 @@ class ItemScreens(ScreenManager):
         self.screen = screen
         # self.add_widget(screen)
         # self.bind(on_size=self.on_size_change)
-        # ^ "AttributeError: 'ItemScreens' object has no attribute
-        #   'on_size'. Did you mean: 'on_size_change'?"
-        #   so renamed on_size_change to on_size
+```
+- `self.bind(on_size=self.on_size_change)`: "AttributeError: 'ItemScreens' object has no attribute 'on_size'. Did you mean: 'on_size_change'?"
 
+```Python
 class HybridRowsApp(App):
     # ...
     def build(self):
@@ -64,18 +65,12 @@ class HybridRowsApp(App):
         # bgColor = Color(1, 1, 1, 1, mode='rgba')
         # screen.canvas.add(bgColor)
         # bgRect.bind(size=screen.size.setter('size'))
-        # ^ AttributeError:
-        #   'kivy.graphics.vertex_instructions.Rectangle' object has no
-        #   attribute 'bind'
         # bgRect = Rectangle(pos=screen.pos, size_hint=(1.0, 1.0))
         # ^ doesn't help
         # screen.canvas.before.add(bgColor)
-        # bgRect.size is a tuple, so try making it into a list property:
-
         # bgRect = Rectangle(pos=screen.pos, size=screen.size)
         # screen.size = ListProperty(screen.size)
-        # ^ "ValueError: ItemScreen.size must be a list or a tuple type"
-        #   so:
+        # bgRect.size is a tuple
 
         # bgRect = Rectangle()
         # screen.bgRect = bgRect
@@ -86,8 +81,6 @@ class HybridRowsApp(App):
         # ^ fails silently
 
         # screen.canvas.before.add(bgRect)
-        # ^ commented since nothing seems to work to make the rect match
-        #   the size of the container :(
 
         # rv = KeyedView(viewclass=ItemRow)
         # ^ accepts viewclass or view_adapter
@@ -98,7 +91,7 @@ class HybridRowsApp(App):
         echo0("type(rv.viewclass): {}"
               "".format(type(rv.viewclass).__name__))
         # ...
-                # self.bind(on_size=screen.custom_on_size)
+        # self.bind(on_size=screen.custom_on_size)
         # ^ fails silently
         # self.on_size=self.custom_on_size
         # ^ fails silently
@@ -108,9 +101,6 @@ class HybridRowsApp(App):
         # bgColor = Color(1, 1, 1, 1, mode='rgba')
         # screen.canvas.add(bgColor)
         # bgRect.bind(size=screen.size.setter('size'))
-        # ^ AttributeError:
-        #   'kivy.graphics.vertex_instructions.Rectangle' object has no
-        #   attribute 'bind'
         # bgRect = Rectangle(pos=screen.pos, size_hint=(1.0, 1.0))
         # ^ doesn't help
         # screen.canvas.before.add(bgColor)
@@ -118,8 +108,6 @@ class HybridRowsApp(App):
 
         # bgRect = Rectangle(pos=screen.pos, size=screen.size)
         # screen.size = ListProperty(screen.size)
-        # ^ "ValueError: ItemScreen.size must be a list or a tuple type"
-        #   so:
 
         # bgRect = Rectangle()
         # screen.bgRect = bgRect
@@ -161,8 +149,10 @@ class HybridRowsApp(App):
         # ^ doesn't work (the form is blank)
         # itemrow = ItemRow()
         # self.rv.attach_recycleview(itemrow)
-        # ^ "AttributeError: 'KeyedView' object has no attribute
-        #   'attach_recycleview'"
-        #   (site above says "Associates a RecycleViewBehavior with
-        #   this instance. It is stored in recycleview.")
 ```
+- `screen.size = ListProperty(screen.size)`: "ValueError: ItemScreen.size must be a list or a tuple type"
+- `bgRect.bind(size=screen.size.setter('size'))`: "AttributeError: 'kivy.graphics.vertex_instructions.Rectangle' object has no attribute 'bind'"
+- `self.rv.attach_recycleview(itemrow)`: "AttributeError: 'KeyedView' object has no attribute 'attach_recycleview'"
+  - <https://kivy.org/doc/stable/api-kivy.uix.recycleview.views.html> says "Associates a RecycleViewBehavior with this instance. It is stored in recycleview."
+
+TLDR: The above code doesn't work. Use the included python files instead to fix the error messages that are noted in this readme for the purpose of you finding this document. See the top of this document for more information on the exact fixes.
