@@ -179,8 +179,9 @@ class ShoppingCartApp(App):
         super().__init__(**kwargs)
 
     def generate_key(self):
-        result = ShoppingCartApp.next_key_i
-        ShoppingCartApp.next_key_i += 1
+        result = self.next_key_i
+        echo2("* generate_key {}".format(result))
+        self.next_key_i += 1
         return result
 
     # def custom_on_size(self):
