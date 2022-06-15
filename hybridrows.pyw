@@ -32,7 +32,7 @@ class ItemRow(RecycleDataViewBehavior,BoxLayout):
         app.rv_data.append({"key":new_key})
 
 
-class MyApp(App):
+class HybridRowsApp(App):
     rv_data = ListProperty()
     next_key_i = NumericProperty()
 
@@ -84,4 +84,4 @@ BoxLayout:
 )
 
 if __name__ == '__main__':
-    MyApp().run()
+    HybridRowsApp().run()

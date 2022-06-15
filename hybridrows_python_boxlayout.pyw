@@ -215,7 +215,7 @@ class ItemScreens(ScreenManager):
         self.on_size()
 """
 
-class ShoppingCartApp(App):
+class HybridRowsApp(App):
     next_key_i = NumericProperty()
 
     def __init__(self, **kwargs):
@@ -355,7 +355,7 @@ class ShoppingCartApp(App):
         # ^ AttributeError: 'ScreenManager' object has no attribute
         #   'minimum_height'
         # rv_layout.height = self.minimum_height
-        # ^ AttributeError: 'ShoppingCartApp' object has no attribute
+        # ^ AttributeError: 'HybridRowsApp' object has no attribute
         #   'minimum_height'
         # rv_layout.spacing = dp(5)
 
@@ -374,4 +374,4 @@ class ShoppingCartApp(App):
 
 
 if __name__ == '__main__':
-    ShoppingCartApp().run()
+    HybridRowsApp().run()
