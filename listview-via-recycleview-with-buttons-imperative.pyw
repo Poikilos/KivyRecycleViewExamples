@@ -22,10 +22,12 @@ import sys
 import kivy
 from kivy.app import App
 # from kivy.lang import Builder
+'''
 from kivy.uix.screenmanager import (
     ScreenManager,
     Screen,
 )
+'''
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import (
@@ -87,18 +89,21 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
             text="Press me",
             pos_hint={"center_x": .5, "center_y": .5},
             size_hint_x=.5,
-            on_press=self.add_data,
+            on_release=self.add_data,
         )
         self.button = button
         self.add_widget(button)
 
     def add_data(self):
+        Clock.schedule_once(self._add_data, .2)
+
+    def _add_data(self, _):
         app = App.get_running_app()
         new_key = app.generate_key()
         entry = {
             'key': new_key,
         }
-        app.rv.data.append(entry)
+        app.rv_data.append(entry)
 
 
 class KeyedView(RecycleView):
@@ -106,7 +111,7 @@ class KeyedView(RecycleView):
         super().__init__(**kwargs)
 
 
-class ItemScreen(Screen):
+class ItemScreen(BoxLayout):
     '''
     A Screen *must* be inside a ScreenManager (See
     <https://kivy.org/doc/stable/
@@ -138,7 +143,16 @@ class ItemScreen(Screen):
         #   reason. *2 works most of the time except rare cases when
         #   the window is resized by more than 2x in one refresh.
 
+    def on_size(self, *args):
+        # ^ must take 3 positional arguments
+        # See <https://kivy.readthedocs.io/_/downloads/en/master/pdf/>
+        # in section 45.1.2 "Adding behaviors".
+        # on_size only occurs for ScreenManager.
+        echo2("* ItemScreens was resized.")
+        echo2("  args: {}".format(args))
+        self.custom_on_size()
 
+"""
 class ItemScreens(ScreenManager):
     '''
     A Screen *must* be inside a ScreenManager (See
@@ -170,7 +184,7 @@ class ItemScreens(ScreenManager):
         echo1("* ItemScreens on_parent")
         echo1("  args: {}".format(args))
         self.on_size()
-
+"""
 
 class ShoppingCartApp(App):
     next_key_i = NumericProperty()
@@ -197,7 +211,10 @@ class ShoppingCartApp(App):
         # has to be scheduled.
         echo1("* App fix_size")
         echo1("  args: {}".format(args))
+        """
         self.sm.on_size()
+        """
+        self.screen.on_size()
 
         echo1("* adding more test data")
         key = self.generate_key()
@@ -209,10 +226,14 @@ class ShoppingCartApp(App):
         echo1("len(self.rv.data): {}".format(len(self.rv.data)))
 
     def build(self):
+        """
         sm = ItemScreens()  # ScreenManager()
         self.sm = sm
         screen = sm.screen
         self.screen = screen
+        """
+        self.screen = ItemScreen()
+        screen = self.screen
         # self.bind(on_size=screen.custom_on_size)
         # ^ fails silently
         # self.on_size=self.custom_on_size
@@ -291,10 +312,10 @@ class ShoppingCartApp(App):
             key = self.generate_key()
             mylist.append(dict(key=key))
             print("* appended {}".format(key))
-        self.sm.screen.rv_data = mylist
+        screen.rv_data = mylist
         '''
         key = self.generate_key()
-        self.sm.screen.rv_data.append({'key':key})
+        screen.rv_data.append({'key':key})
 
         rv.data = screen.rv_data
         rv_layout = RecycleGridLayout()
@@ -313,12 +334,17 @@ class ShoppingCartApp(App):
         #   'minimum_height'
         # rv_layout.spacing = dp(5)
 
+        """
         sm.add_widget(screen)
+        """
         screen.add_widget(rv)
         rv.add_widget(rv_layout)
 
         Clock.schedule_once(self.fix_size, .1)
+        """
         return sm
+        """
+        return screen
         # return Builder.load_string(kv)
 
 

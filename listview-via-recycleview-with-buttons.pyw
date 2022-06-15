@@ -59,9 +59,9 @@ class MyApp(App):
         text: "Press Me"
         pos_hint: {"center_x": .5, "center_y": .5}
         size_hint_x: .5
-        on_press: root.add_data()
+        on_release: root.add_data()
 
-Screen:
+BoxLayout:
     canvas.before:
         Color:
             rgba: 1,1,1,1
