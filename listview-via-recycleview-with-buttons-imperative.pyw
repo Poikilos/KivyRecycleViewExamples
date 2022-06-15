@@ -45,9 +45,15 @@ from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 
-verbose = 0
+verbose = 2
+
+# NOTE: Hmm... When using kivy, args get erased
+#   (len is 1: only the py* file is in sys.argv):
+# print("len(sys.argv): {}".format(len(sys.argv)))
+# print("sys.argv: {}".format(sys.argv))
 for argI in range(1, len(sys.argv)):
     arg = sys.argv[argI]
+    # print("arg[{}]: {}".format(argI, arg))
     if arg.startswith("--"):
         if arg == "--verbose":
             verbose = 1
@@ -71,7 +77,7 @@ def echo2(msg):
     echo0("[debug] {}".format(msg))
 
 
-class ItemRow(RecycleDataViewBehavior, BoxLayout):
+class ItemRow(BoxLayout):
     key = StringProperty()
 
     def __init__(self, **kwargs):
@@ -80,7 +86,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         # BoxLayout.__init__(**kwargs)
         # ^ doesn't help, because __init__ is never called
         self.orientation = "horizontal"
-        print("    - building ItemRow")
+        echo1("    - building ItemRow")
         label = Label(text=self.key)
         self.label = label
         self.add_widget(label)
@@ -94,7 +100,8 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         self.button = button
         self.add_widget(button)
 
-    def add_data(self):
+    def add_data(self, _):
+        echo2("* add_data")
         Clock.schedule_once(self._add_data, .2)
 
     def _add_data(self, _):
@@ -103,12 +110,30 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         entry = {
             'key': new_key,
         }
-        app.rv_data.append(entry)
+        app.rv.rv_data.append(entry)
 
 
 class KeyedView(RecycleView):
+    rv_data = ListProperty()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        app = App.get_running_app()
+        mylist = list()
+        for i in range(10):
+            key = app.generate_key()
+            mylist.append(dict(key=key))
+            echo1("* appended {}".format(key))
+        self.rv_data = mylist
+        Clock.schedule_once(self.set_viewclass)  # schedule setting the viewclass
+
+    def on_rv_data(self, *args):
+        echo2("* on_rv_data")
+        self.data = self.rv_data
+
+    def set_viewclass(self, _):
+        echo2("* set_viewclass")
+        self.viewclass = ItemRow
 
 
 class ItemScreen(BoxLayout):
@@ -118,7 +143,7 @@ class ItemScreen(BoxLayout):
     api-kivy.uix.screenmanager.html?
     highlight=screen#kivy.uix.screenmanager.Screen>)
     '''
-    rv_data = ListProperty()
+
 
     def __init__(self, **kwargs):
         # NOTE: build is only for App.
@@ -193,7 +218,7 @@ class ShoppingCartApp(App):
         super().__init__(**kwargs)
 
     def generate_key(self):
-        result = self.next_key_i
+        result = str(self.next_key_i)
         echo2("* generate_key {}".format(result))
         self.next_key_i += 1
         return result
@@ -263,7 +288,8 @@ class ShoppingCartApp(App):
 
         # bgRect = Rectangle()
         # screen.bgRect = bgRect
-        # print("type(bgRect.size):{}".format(type(bgRect.size).__name__))
+        # echo1("type(bgRect.size):{}"
+        #       "".format(type(bgRect.size).__name__))
 
         # screen.bind(width=screen.setter('width'))
         # ^ fails silently
@@ -281,6 +307,7 @@ class ShoppingCartApp(App):
         echo0("type(rv.viewclass): {}"
               "".format(type(rv.viewclass).__name__))
         self.rv = rv
+        self.screen.rv = rv
         # rv.viewclass = "ItemRow"
         # ^ doesn't work (the form is blank)
         # rv.viewclass = ItemRow
@@ -305,19 +332,13 @@ class ShoppingCartApp(App):
         #   this instance. It is stored in recycleview.")
 
 
+        """
         echo1("* adding test data")
-        '''
-        mylist = list()
-        for i in range(10):
-            key = self.generate_key()
-            mylist.append(dict(key=key))
-            print("* appended {}".format(key))
-        screen.rv_data = mylist
-        '''
         key = self.generate_key()
         screen.rv_data.append({'key':key})
-
         rv.data = screen.rv_data
+        """
+
         rv_layout = RecycleGridLayout()
         self.rv_layout = rv_layout
         rv_layout.cols = 2
