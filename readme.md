@@ -21,6 +21,11 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         # BoxLayout.__init__(**kwargs)
         # ^ doesn't help, because __init__ is never called
 
+        # ...
+
+    # ...
+
+
 class ItemScreen(Screen):
     def __init__(self, **kwargs):
         # NOTE: build is only for App.
@@ -37,6 +42,7 @@ class ItemScreen(Screen):
         # ^ NOTE: Change rect size to screen,
         #   but on_size only occurs for ScreenManager not Screen.
 
+    # ...
 
 class ItemScreens(ScreenManager):
     def __init__(self, **kwargs):
@@ -46,15 +52,20 @@ class ItemScreens(ScreenManager):
         self.screen = screen
         # self.add_widget(screen)
         # self.bind(on_size=self.on_size_change)
+
+    # ...
 ```
 - `self.bind(on_size=self.on_size_change)`: "AttributeError: 'ItemScreens' object has no attribute 'on_size'. Did you mean: 'on_size_change'?"
 
 ```Python
 class HybridRowsApp(App):
+
     # ...
+
     def build(self):
 
         # ...
+
         # self.bind(on_size=screen.custom_on_size)
         # ^ fails silently
         # self.on_size=self.custom_on_size
@@ -90,7 +101,9 @@ class HybridRowsApp(App):
         #   to the constructor.
         echo0("type(rv.viewclass): {}"
               "".format(type(rv.viewclass).__name__))
+
         # ...
+
         # self.bind(on_size=screen.custom_on_size)
         # ^ fails silently
         # self.on_size=self.custom_on_size
