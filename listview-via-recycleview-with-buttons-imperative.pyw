@@ -92,7 +92,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         self.button = button
         self.add_widget(button)
 
-    def add_data(self):
+    def add_data(self, _):
         app = App.get_running_app()
         new_key = app.generate_key()
         entry = {
@@ -104,7 +104,10 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
 class KeyedView(RecycleView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        Clock.schedule_once(self.set_viewclass)
 
+    def set_viewclass(self, _):
+        self.viewclass = ItemRow
 
 class ItemScreen(Screen):
     '''
@@ -137,6 +140,11 @@ class ItemScreen(Screen):
         # ^ *2 is necessary to prevent size lagging behind for some
         #   reason. *2 works most of the time except rare cases when
         #   the window is resized by more than 2x in one refresh.
+
+    def on_rv_data(self, *args):
+        echo2("* on_rv_data {}".format(args))
+        app = App.get_running_app()
+        app.rv.data = self.rv_data
 
 
 class ItemScreens(ScreenManager):
