@@ -6,7 +6,9 @@ from kivy.properties import (
     StringProperty,
     ListProperty,
     BooleanProperty,
+    NumericProperty,
 )
+from kivy.clock import Clock
 
 kv = '''
 <TwoButtons>:
@@ -14,12 +16,13 @@ kv = '''
 # The means this widget will be instanced to view one element of data from the data list.
 # The RecycleView data list is a list of dictionaries.  The keys in the dictionary specify the
 # attributes of the widget.
-    Button:
-        text: root.left_text
-        on_release: print(f'Button {self.text} pressed')
+    CheckBox:
+        id: checkbox
+        active: root.active
+        on_release: root.on_checked_changed(root)
     Button:
         text: root.right_text
-        on_release: print(f'Button {self.text} pressed')
+        on_release: print(f'{self.text} pressed')
 
 BoxLayout:
     orientation: 'vertical'
@@ -46,8 +49,15 @@ BoxLayout:
 
 
 class TwoButtons(BoxLayout):  # The viewclass definitions, and property definitions.
-    left_text = StringProperty()
+    index = NumericProperty()
+    active = BooleanProperty()
     right_text = StringProperty()
+
+    def on_checked_changed(self, twobuttons):
+        self.active = twobuttons.ids.checkbox.active
+        app = App.get_running_app()
+        app.root.ids.rv.rv_data_list[self.index]['active'] = self.active
+        print(f'{self.right_text} checked={self.active}')
 
 
 class RV(RecycleView):
@@ -55,7 +65,12 @@ class RV(RecycleView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.rv_data_list = [{'left_text': f'Left {i}', 'right_text': f'Right {i}'} for i in range(2)]
+        for i in range(2):
+            self.rv_data_list.append({
+                'index': len(self.rv_data_list),
+                'active': True,
+                'right_text': f'Right {i}',
+            })
         # This list comprehension is used to create the data list for this simple example.
         # The data created looks like:
         # [{'left_text': 'Left 0', 'right_text': 'Right 0'}, {'left_text': 'Left 1', 'right_text': 'Right 1'},
@@ -64,16 +79,25 @@ class RV(RecycleView):
         # The data needs to be in this kind of list of dictionary formats.  The RecycleView instances the
         # widgets, and populates them with data from this list.
 
+        Clock.schedule_interval(self.dump_values, 1)
+
+    def dump_values(self, passed_seconds):
+        print("* dump_values data={}".format(self.data))
+
     def add(self):
-        l = len(self.rv_data_list)
-        self.rv_data_list.extend(
-            [{'left_text': f'Added Left {i}', 'right_text': f'Added Right {i}'} for i in range(l, l + 1)])
+        index = len(self.rv_data_list)
+        self.rv_data_list.append({
+            'index': index,
+            'active': False,
+            'right_text': f'Added Right {index}',
+        })
 
 
 class RVTwoApp(App):
 
     def build(self):
-        return Builder.load_string(kv)
+        root = Builder.load_string(kv)
+        return root
 
 
 RVTwoApp().run()
