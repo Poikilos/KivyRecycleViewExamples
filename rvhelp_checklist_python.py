@@ -46,7 +46,6 @@ class TwoButtons(BoxLayout):  # The viewclass definitions, and property definiti
               "".format(v, self.right_button.text))
         if twobuttons.active_cb.active != v:
             twobuttons.active_cb.active = v
-            twobuttons.right_button.text = str(v)
         # else don't trigger infinite loop
 
     def on_right_text(self, obj, v):
