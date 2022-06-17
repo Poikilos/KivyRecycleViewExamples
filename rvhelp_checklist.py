@@ -53,8 +53,8 @@ class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions
     mark = BooleanProperty()
     right_text = StringProperty()
 
-    def on_checkbox_pressed(self, twobuttons):
-        self.mark = twobuttons.ids.checkbox.active
+    def on_checkbox_pressed(self, itemrow):
+        self.mark = itemrow.ids.checkbox.active
         app = App.get_running_app()
         app.root.ids.rv.rv_data_list[self.index]['mark'] = self.mark
         print(f'{self.right_text} checked={self.mark}')

@@ -33,25 +33,25 @@ class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions
         self.add_widget(right_button)
         self.right_button = right_button
 
-    def on_checkbox_pressed(self, twobuttons):
-        if self.mark != twobuttons.mark_cb.active:
-            self.mark = twobuttons.mark_cb.active
+    def on_checkbox_pressed(self, itemrow):
+        if self.mark != itemrow.mark_cb.active:
+            self.mark = itemrow.mark_cb.active
             app = App.get_running_app()
             app.root.rv.rv_data_list[self.index]['mark'] = self.mark
         # else don't trigger an infinite loop.
 
-    def on_mark(self, twobuttons, v):
+    def on_mark(self, itemrow, v):
         '''
         If checked using the checkbox, the following is always true
         because on_checkbox_pressed sets mark:
-        `twobuttons.mark_cb.active == v`
+        `itemrow.mark_cb.active == v`
         but that's ok because the checkbox should only be set if the
         mark BooleanProperty changes externally.
         '''
-        print("on_mark(twobuttons, {}) self.right_button.text:{}"
+        print("on_mark(itemrow, {}) self.right_button.text:{}"
               "".format(v, self.right_button.text))
-        if twobuttons.mark_cb.active != v:
-            twobuttons.mark_cb.active = v
+        if itemrow.mark_cb.active != v:
+            itemrow.mark_cb.active = v
         # else don't trigger infinite loop
 
     def on_right_text(self, obj, v):
