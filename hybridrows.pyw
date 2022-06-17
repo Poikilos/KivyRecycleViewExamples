@@ -86,8 +86,8 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         app.get_row(itemrow.key)['mark'] = itemrow.ids.checkbox.active
         # ^ This works (app.rv_data at the correct index changes) but
         #   upon adding a new row, the value is reset!
-        # print(f'{self.right_text} mark={self.mark}')
-        print(f'app.rv_data:{app.rv_data}')
+        # print('{} mark={}'.format(self.right_text, self.mark))
+        print('app.rv_data:{}'.format(app.rv_data))
 
     def on_mark(self, itemrow, value):
         '''
@@ -159,7 +159,12 @@ class HybridRowsApp(App):
         return str(result)
 
     def build(self):
-        return Builder.load_string("""
+        return Builder.load_string(kv)
+        # returns a BoxLayout.
+        # return root
+
+
+kv = """
 <ItemRow>
     orientation: "horizontal"
     Button:
@@ -197,10 +202,6 @@ BoxLayout:
             height: self.minimum_height
             spacing: dp(5)
 """
-)
-        # returns a BoxLayout.
-        # return root
-
 
 if __name__ == '__main__':
     HybridRowsApp().run()
