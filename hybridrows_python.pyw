@@ -105,13 +105,13 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         self.label = label
         self.add_widget(label)
 
-    def add_data(self, _):
+    def add_data(self, itemrow):
         echo2("")
-        echo2("add_data(itemrow) self.key:{}".format(_.key))
-        Clock.schedule_once(self._add_data, .2)
+        echo2("add_data(itemrow) self.key:{}".format(itemrow.key))
+        Clock.schedule_once(lambda seconds: itemrow._add_data(itemrow), .2)
 
-    def _add_data(self, seconds):
-        echo2("  * _add_data(seconds) self.key:{}".format(self.key))
+    def _add_data(self, itemrow):
+        echo2("  - _add_data(itemrow) self.key:{}".format(self.key))
         # ^ The key is NOT for the value being added, but clicked.
         app = App.get_running_app()
         entry = {
@@ -209,7 +209,8 @@ class KeyedView(RecycleView):
         return -1
 
     def on_rv_data(self, keyedview, data):
-        echo2("* on_rv_data(keyedview, {})".format(data))
+        echo2("* on_rv_data(keyedview, data)")
+        echo2("  - rv_data={}".format(data))
         app = App.get_running_app()
         app.rv.data = self.rv_data
 
@@ -255,17 +256,17 @@ class ItemScreens(ScreenManager):
         print("* ItemScreens init")
         self.screen = ItemScreen()
 
-    def on_size(self, itemscreens, size):
-        # ^ must take 3 positional arguments
+    def on_size(self, instance, size):
+        # ^ must take 3 positional arguments (self, ScreenManager, size)
         # See <https://kivy.readthedocs.io/_/downloads/en/master/pdf/>
         # in section 45.1.2 "Adding behaviors".
         # on_size only occurs for ScreenManager.
-        echo2("* on_size(itemscreens, {}).".format(size))
-        self.screen.custom_on_size(itemscreens)
+        echo2("* on_size(instance, {})".format(size))
+        self.screen.custom_on_size(instance)
 
-    def on_parent(self, itemscreens, window):
-        echo1("* ItemScreens on_parent(itemscreens, window)")
-        self.on_size(itemscreens, itemscreens.size)
+    def on_parent(self, instance, window):
+        echo2("* ItemScreens on_parent(itemscreens, window)")
+        self.on_size(instance, instance.size)
 
 
 class HybridRowsApp(App):

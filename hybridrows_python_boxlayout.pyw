@@ -71,7 +71,7 @@ def echo2(*args, **kwargs):
 
 class ItemRow(BoxLayout):
     key = StringProperty()
-    checked = BooleanProperty()
+    mark = BooleanProperty()
 
     def __init__(self, **kwargs):
         # ^ kwargs=={} by default, and self.key is "" at this point.
@@ -89,7 +89,7 @@ class ItemRow(BoxLayout):
         self.add_widget(button)
 
         checkbox = CheckBox(
-            active=self.checked,
+            active=self.mark,
             on_release=lambda this_cb: self.on_checkbox_pressed(self),
             size_hint_x=.1,
         )
@@ -101,16 +101,17 @@ class ItemRow(BoxLayout):
         self.label = label
         self.add_widget(label)
 
-    def add_data(self, _):
+    def add_data(self, itemrow):
         echo2("")
-        echo2("add_data(itemrow) self.key:{}".format(_.key))
-        Clock.schedule_once(lambda seconds: _._add_data(_), .2)
+        echo2("add_data(itemrow) self.key:{}".format(itemrow.key))
+        Clock.schedule_once(lambda seconds: itemrow._add_data(itemrow), .2)
 
     def _add_data(self, itemrow):
-        echo2("  - _add_data({})".format(itemrow))
+        echo2("  - _add_data(itemrow) self.key:{}".format(self.key))
+        # ^ The key is NOT for the value being added, but clicked.
         app = App.get_running_app()
         entry = {
-            'checked': False,
+            'mark': False,
             'key': app.generate_key(),
         }
         app.rv.rv_data.append(entry)
@@ -118,36 +119,36 @@ class ItemRow(BoxLayout):
     def on_checkbox_pressed(self, itemrow):
         '''
         The checkbox changed the value, so update the data source
-        (self.checked hasn't changed yet).
+        (self.mark hasn't changed yet).
         '''
         app = App.get_running_app()
         echo2("on_checkbox_pressed({})".format(type(itemrow).__name__))
-        echo2("- self.key={} checked={}"
-              "".format(self.key, self.checked))
-        echo2("- itemrow.key={} checked={}"
-              "".format(itemrow.key, itemrow.checked))
+        echo2("- self.key={} mark={}"
+              "".format(self.key, self.mark))
+        echo2("- itemrow.key={} mark={}"
+              "".format(itemrow.key, itemrow.mark))
         echo2("- data={}".format(app.rv.rv_data))
-        self.checked = itemrow.checkbox.active
+        self.mark = itemrow.checkbox.active
         if "{}".format(itemrow.key) == "":
             echo2("- skipped (no key)")
             return
-        if app.rv.get_row(itemrow.key)['checked'] != self.checked:
-            app.rv.get_row(itemrow.key)['checked'] = self.checked
-        # print(f'{self.right_text} checked={self.checked}')
+        if app.rv.get_row(itemrow.key)['mark'] != self.mark:
+            app.rv.get_row(itemrow.key)['mark'] = self.mark
+        # print(f'{self.right_text} mark={self.mark}')
 
-    def on_checked(self, itemrow, value):
+    def on_mark(self, itemrow, value):
         '''
-        The data source changed the value, or the checked property
+        The data source changed the value, or the mark property
         changed for some other reason, so change the checkbox.
         '''
         app = App.get_running_app()
-        linked_checked = None
+        linked_mark = None
         if "{}".format(itemrow.key) != "":
-            linked_checked = app.rv.get_row(itemrow.key)['checked']
-        echo2("on_checked(itemrow.key={}, {}) self.checkbox.active={}"
-              " [{}]['checked']={}"
+            linked_mark = app.rv.get_row(itemrow.key)['mark']
+        echo2("on_mark(itemrow.key={}, {}) self.checkbox.active={}"
+              " [{}]['mark']={}"
               "".format(itemrow.key, value, self.checkbox.active,
-                        itemrow.key, linked_checked))
+                        itemrow.key, linked_mark))
         if self.checkbox.active != value:
             echo2("- self.checkbox.active=value")
             self.checkbox.active = value
@@ -156,26 +157,26 @@ class ItemRow(BoxLayout):
             # Key is blank while being created, so this isn't a press,
             # but the checkbox still needs to change.
             pass
-        elif app.rv.get_row(itemrow.key)['checked'] != value:
-            echo2("- app.rv.get_row(itemrow.key)['checked']=value")
-            app.rv.get_row(itemrow.key)['checked'] = value
+        elif app.rv.get_row(itemrow.key)['mark'] != value:
+            echo2("- app.rv.get_row(itemrow.key)['mark']=value")
+            app.rv.get_row(itemrow.key)['mark'] = value
 
     def on_key(self, itemrow, value):
         app = App.get_running_app()
         echo2("on_key(({}, {}), {})"
-              "".format(itemrow.key, itemrow.checked, value))
-        linked_checked = None
+              "".format(itemrow.key, itemrow.mark, value))
+        linked_mark = None
         if "{}".format(itemrow.key) != "":
-            linked_checked = app.rv.get_row(itemrow.key)['checked']
-        echo2("on_checked(itemrow.key={}, {}) self.checkbox.active={}"
-              " [{}]['checked']={}"
+            linked_mark = app.rv.get_row(itemrow.key)['mark']
+        echo2("on_mark(itemrow.key={}, {}) self.checkbox.active={}"
+              " [{}]['mark']={}"
               "".format(itemrow.key, value, self.checkbox.active,
                         itemrow.key,
-                        linked_checked))
+                        linked_mark))
         self.label.text = value
         '''
-        if self.checkbox.active != itemrow.checked:
-            self.checkbox.active = itemrow.checked
+        if self.checkbox.active != itemrow.mark:
+            self.checkbox.active = itemrow.mark
             echo1("  fixing data:{}".format(app.rv.data))
         '''
 
@@ -192,7 +193,7 @@ class KeyedView(RecycleView):
             key = app.generate_key()
             mylist.append({
                 'key': key,
-                'checked': True,
+                'mark': True,
             })
             echo1("* appended {}".format(key))
         self.rv_data = mylist
@@ -201,12 +202,11 @@ class KeyedView(RecycleView):
             key = app.generate_key()
             self.rv_data.append({
                 'key': key,
-                'checked': True,
+                'mark': True,
             })
             echo1("* appended {}".format(key))
 
         Clock.schedule_once(self.set_viewclass)
-        # ^ schedule setting the viewclass
 
     def set_viewclass(self, seconds):
         echo2("* set_viewclass(seconds)")
@@ -240,9 +240,9 @@ class KeyedView(RecycleView):
         '''
         for i in range(len(self.view_adapter.views)):
             echo2("  - setting [{}] to {}".format(i, self.data[i]))
-            # self.view_adapter.items[i].checked = self.data[i]['checked']
+            # self.view_adapter.items[i].mark = self.data[i]['mark']
             # ^ self.view_adapter has no attribute 'items'
-            # self.view_adapter.views[i].checked = self.data[i]['checked']
+            # self.view_adapter.views[i].mark = self.data[i]['mark']
             # ^ Doesn't help, since self.data is wrong (values change
             #   random each time a "+" button is clicked)!
 
@@ -272,7 +272,8 @@ class ItemScreen(BoxLayout):
         self.canvas.before.add(self.bgColor)
         self.canvas.before.add(self.bgRect)
 
-    def custom_on_size(self):
+    def custom_on_size(self, _):
+        # ^ _ may be seconds (See schedule_once) or itemscreens
         echo2("* ItemScreen custom_on_size")
         # self.bgRect.size = (self.size[0], self.size[1])
         self.bgRect.size = (self.size[0]*2, self.size[1]*2)
@@ -280,14 +281,13 @@ class ItemScreen(BoxLayout):
         #   reason. *2 works most of the time except rare cases when
         #   the window is resized by more than 2x in one refresh.
 
-    def on_size(self, *args):
-        # ^ must take 3 positional arguments
+    def on_size(self, instance, size):
+        # ^ must take 3 positional arguments (self, ItemScreen, size)
         # See <https://kivy.readthedocs.io/_/downloads/en/master/pdf/>
         # in section 45.1.2 "Adding behaviors".
         # on_size only occurs for ScreenManager.
-        echo2("* ItemScreens was resized.")
-        echo2("  args: {}".format(args))
-        self.custom_on_size()
+        echo2("* on_size(instance, {})".format(size))
+        self.custom_on_size(instance)
 
 
 class HybridRowsApp(App):
@@ -304,8 +304,6 @@ class HybridRowsApp(App):
 
     def build(self):
         self.screen = ItemScreen()
-        screen = self.screen
-
         self.rv = KeyedView()
 
         rv_layout = RecycleGridLayout()
@@ -313,11 +311,12 @@ class HybridRowsApp(App):
         rv_layout.cols = 1
         rv_layout.default_size_hint = (1, None)
 
-        screen.add_widget(self.rv)
+        self.screen.add_widget(self.rv)
         self.rv.add_widget(rv_layout)
 
-        Clock.schedule_once(self.screen.on_size, .1)
-        return screen
+        # Clock.schedule_once(self.screen.on_size, .1)
+        Clock.schedule_once(self.screen.custom_on_size, .1)
+        return self.screen
 
 
 if __name__ == '__main__':
