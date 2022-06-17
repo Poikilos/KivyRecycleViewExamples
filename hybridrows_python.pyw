@@ -110,6 +110,16 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         echo2("add_data(itemrow) self.key:{}".format(_.key))
         Clock.schedule_once(self._add_data, .2)
 
+    def _add_data(self, seconds):
+        echo2("  * _add_data(seconds) self.key:{}".format(self.key))
+        # ^ The key is NOT for the value being added, but clicked.
+        app = App.get_running_app()
+        entry = {
+            'checked': False,
+            'key': app.generate_key(),
+        }
+        app.rv.rv_data.append(entry)
+
     def on_checked_changed(self, itemrow):
         '''
         The checkbox changed the value, so update the data source
@@ -172,16 +182,6 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
             echo1("  fixing data:{}".format(app.rv.data))
         '''
 
-    def _add_data(self, seconds):
-        echo2("  * _add_data(seconds) self.key:{}".format(self.key))
-        # ^ The key is NOT for the value being added, but clicked.
-        app = App.get_running_app()
-        entry = {
-            'checked': False,
-            'key': app.generate_key(),
-        }
-        app.rv.rv_data.append(entry)
-
 
 class KeyedView(RecycleView):
     rv_data = ListProperty()
@@ -190,8 +190,8 @@ class KeyedView(RecycleView):
         super().__init__(**kwargs)
         Clock.schedule_once(self.set_viewclass)
 
-    def set_viewclass(self, _):
-        echo2("* set_viewclass({})".format(_))
+    def set_viewclass(self, seconds):
+        echo2("* set_viewclass(seconds)")
         self.viewclass = ItemRow
 
     def get_row(self, key):

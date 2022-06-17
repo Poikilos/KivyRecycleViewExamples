@@ -59,7 +59,8 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def add_data(self):
+    def add_data(self, itemrow):
+        echo2("add_data(itemrow.key={})".format(itemrow.key))
         app = App.get_running_app()
         new_key = app.generate_key()
         app.rv_data.append({
@@ -165,7 +166,7 @@ class HybridRowsApp(App):
         text: "+"
         pos_hint: {"center_x": .5, "center_y": .5}
         size_hint_x: .1
-        on_release: root.add_data()
+        on_release: root.add_data(root)
     CheckBox:
         id: checkbox
         size_hint_x: .1

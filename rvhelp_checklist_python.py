@@ -75,16 +75,6 @@ class RBL(RecycleBoxLayout):
 class RV(RecycleView):
     rv_data_list = ListProperty()  # A list property is used to hold the data for the recycleview, see the kv code
 
-    def on_rv_data_list(self, rv, data_list):
-        '''
-        If the entire list is replaced, that would breaks things
-        (checkboxes aren't updated)! Therefore, modify rv_data_list
-        rather than replacing it (or iterate through the widgets and
-        set them using the data_list).
-        '''
-        print("on_rv_data_list(rv, data_list)")
-        self.data = self.rv_data_list
-
     def __init__(self, **kwargs):
         self.init_done = False
         super().__init__(**kwargs)
@@ -116,11 +106,21 @@ class RV(RecycleView):
         # Clock.schedule_interval(self.dump_values, 10)
         self.init_done = True
 
-    def dump_values(self, passed_seconds):
-        print("* dump_values data={}".format(self.data))
-
     def set_viewclass(self, _):
         self.viewclass = TwoButtons
+
+    def on_rv_data_list(self, rv, data_list):
+        '''
+        If the entire list is replaced, that would breaks things
+        (checkboxes aren't updated)! Therefore, modify rv_data_list
+        rather than replacing it (or iterate through the widgets and
+        set them using the data_list).
+        '''
+        print("on_rv_data_list(rv, data_list)")
+        self.data = self.rv_data_list
+
+    def dump_values(self, passed_seconds):
+        print("* dump_values data={}".format(self.data))
 
     def add(self, *args):
         index = len(self.rv_data_list)

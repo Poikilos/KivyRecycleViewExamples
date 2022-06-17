@@ -106,6 +106,15 @@ class ItemRow(BoxLayout):
         echo2("add_data(itemrow) self.key:{}".format(_.key))
         Clock.schedule_once(lambda seconds: _._add_data(_), .2)
 
+    def _add_data(self, itemrow):
+        echo2("  - _add_data({})".format(itemrow))
+        app = App.get_running_app()
+        entry = {
+            'checked': False,
+            'key': app.generate_key(),
+        }
+        app.rv.rv_data.append(entry)
+
     def on_checked_changed(self, itemrow):
         '''
         The checkbox changed the value, so update the data source
@@ -170,16 +179,6 @@ class ItemRow(BoxLayout):
             echo1("  fixing data:{}".format(app.rv.data))
         '''
 
-    def _add_data(self, button):
-        itemrow = button
-        echo2("  - _add_data({})".format(itemrow))
-        app = App.get_running_app()
-        entry = {
-            'checked': False,
-            'key': app.generate_key(),
-        }
-        app.rv.rv_data.append(entry)
-
 
 class KeyedView(RecycleView):
     rv_data = ListProperty()
@@ -209,18 +208,25 @@ class KeyedView(RecycleView):
         Clock.schedule_once(self.set_viewclass)
         # ^ schedule setting the viewclass
 
+    def set_viewclass(self, seconds):
+        echo2("* set_viewclass(seconds)")
+        self.viewclass = ItemRow
+
     def get_row(self, key):
         return self.rv_data[self.find_row(key)]
 
     def find_row(self, key):
+        if not isinstance(key, str):
+            raise ValueError(
+                "key must be str but is {} {}"
+                "".format(type(key).__name__, key)
+            )
         for i in range(len(self.rv_data)):
             if self.rv_data[i]['key'] == key:
                 return i
         return -1
 
-    def on_rv_data(self, *args):
-        keyedview = args[0]
-        data = args[1]
+    def on_rv_data(self, keyedview, data):
         echo2("* on_rv_data(keyedview, data)")
         echo2("  - rv_data={}".format(data))
         self.data = self.rv_data
@@ -247,10 +253,6 @@ class KeyedView(RecycleView):
             # else avoid infinite loop
         '''
         # Clock.schedule_once(self.read_data, .1)
-
-    def set_viewclass(self, _):
-        echo2("* set_viewclass({})".format(_))
-        self.viewclass = ItemRow
 
 
 class ItemScreen(BoxLayout):
