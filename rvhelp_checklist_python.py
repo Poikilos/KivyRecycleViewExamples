@@ -15,17 +15,17 @@ from kivy.clock import Clock
 
 class TwoButtons(BoxLayout):  # The viewclass definitions, and property definitions.
     index = NumericProperty()
-    active = BooleanProperty()
+    mark = BooleanProperty()
     right_text = StringProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        active_cb = CheckBox(
-            active=self.active,
-            on_release=lambda cb: self.on_checked_changed(self),
+        mark_cb = CheckBox(
+            active=self.mark,
+            on_release=lambda cb: self.on_checkbox_pressed(self),
         )
-        self.active_cb = active_cb
-        self.add_widget(active_cb)
+        self.mark_cb = mark_cb
+        self.add_widget(mark_cb)
         right_button = Button(
             text=self.right_text,
             on_release=lambda btn: print(f'{self.right_text} Button'),
@@ -33,25 +33,25 @@ class TwoButtons(BoxLayout):  # The viewclass definitions, and property definiti
         self.add_widget(right_button)
         self.right_button = right_button
 
-    def on_checked_changed(self, twobuttons):
-        if self.active != twobuttons.active_cb.active:
-            self.active = twobuttons.active_cb.active
+    def on_checkbox_pressed(self, twobuttons):
+        if self.mark != twobuttons.mark_cb.active:
+            self.mark = twobuttons.mark_cb.active
             app = App.get_running_app()
-            app.root.rv.rv_data_list[self.index]['active'] = self.active
+            app.root.rv.rv_data_list[self.index]['mark'] = self.mark
         # else don't trigger an infinite loop.
 
-    def on_active(self, twobuttons, v):
+    def on_mark(self, twobuttons, v):
         '''
         If checked using the checkbox, the following is always true
-        because on_checked_changed sets active:
-        `twobuttons.active_cb.active == v`
+        because on_checkbox_pressed sets mark:
+        `twobuttons.mark_cb.active == v`
         but that's ok because the checkbox should only be set if the
-        active BooleanProperty changes externally.
+        mark BooleanProperty changes externally.
         '''
-        print("on_active(twobuttons, {}) self.right_button.text:{}"
+        print("on_mark(twobuttons, {}) self.right_button.text:{}"
               "".format(v, self.right_button.text))
-        if twobuttons.active_cb.active != v:
-            twobuttons.active_cb.active = v
+        if twobuttons.mark_cb.active != v:
+            twobuttons.mark_cb.active = v
         # else don't trigger infinite loop
 
     def on_right_text(self, obj, v):
@@ -81,17 +81,17 @@ class RV(RecycleView):
         for i in range(2):
             self.rv_data_list.append({
                 'index': len(self.rv_data_list),
-                'active': True,
+                'mark': True,
                 'right_text': f'Right {i}',
             })
         '''
         This list comprehension is used to create the data list for
         this simple example.
         The data created looks like:
-        [{'index': 0, 'active': True, 'right_text': 'Right 0'},
-        {'index': 1, 'active': True, 'right_text': 'Right 1'},
-        {'index': 2, 'active': True, 'right_text': 'Right 2'},
-        {'index': 3, 'active': True...
+        [{'index': 0, 'mark': True, 'right_text': 'Right 0'},
+        {'index': 1, 'mark': True, 'right_text': 'Right 1'},
+        {'index': 2, 'mark': True, 'right_text': 'Right 2'},
+        {'index': 3, 'mark': True...
         Notice that the keys in the dictionary correspond to the kivy
         properties in the TwoButtons class. The data needs to be in
         this kind of list of dictionary formats.  The RecycleView
@@ -126,7 +126,7 @@ class RV(RecycleView):
         index = len(self.rv_data_list)
         self.rv_data_list.append({
             'index': index,
-            'active': False,
+            'mark': False,
             'right_text': f'Added Right {index}',
         })
 

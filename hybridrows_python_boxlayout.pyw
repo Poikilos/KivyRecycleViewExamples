@@ -90,7 +90,7 @@ class ItemRow(BoxLayout):
 
         checkbox = CheckBox(
             active=self.checked,
-            on_release=lambda this_cb: self.on_checked_changed(self),
+            on_release=lambda this_cb: self.on_checkbox_pressed(self),
             size_hint_x=.1,
         )
         # ^ If not using a lambda, the param will be this checkbox.
@@ -115,13 +115,13 @@ class ItemRow(BoxLayout):
         }
         app.rv.rv_data.append(entry)
 
-    def on_checked_changed(self, itemrow):
+    def on_checkbox_pressed(self, itemrow):
         '''
         The checkbox changed the value, so update the data source
         (self.checked hasn't changed yet).
         '''
         app = App.get_running_app()
-        echo2("on_checked_changed({})".format(type(itemrow).__name__))
+        echo2("on_checkbox_pressed({})".format(type(itemrow).__name__))
         echo2("- self.key={} checked={}"
               "".format(self.key, self.checked))
         echo2("- itemrow.key={} checked={}"
@@ -141,13 +141,13 @@ class ItemRow(BoxLayout):
         changed for some other reason, so change the checkbox.
         '''
         app = App.get_running_app()
-        key_checked = None
+        linked_checked = None
         if "{}".format(itemrow.key) != "":
-            key_checked = app.rv.get_row(itemrow.key)['checked']
+            linked_checked = app.rv.get_row(itemrow.key)['checked']
         echo2("on_checked(itemrow.key={}, {}) self.checkbox.active={}"
               " [{}]['checked']={}"
               "".format(itemrow.key, value, self.checkbox.active,
-                        itemrow.key, key_checked))
+                        itemrow.key, linked_checked))
         if self.checkbox.active != value:
             echo2("- self.checkbox.active=value")
             self.checkbox.active = value
@@ -164,14 +164,14 @@ class ItemRow(BoxLayout):
         app = App.get_running_app()
         echo2("on_key(({}, {}), {})"
               "".format(itemrow.key, itemrow.checked, value))
-        key_checked = None
+        linked_checked = None
         if "{}".format(itemrow.key) != "":
-            key_checked = app.rv.get_row(itemrow.key)['checked']
+            linked_checked = app.rv.get_row(itemrow.key)['checked']
         echo2("on_checked(itemrow.key={}, {}) self.checkbox.active={}"
               " [{}]['checked']={}"
               "".format(itemrow.key, value, self.checkbox.active,
                         itemrow.key,
-                        key_checked))
+                        linked_checked))
         self.label.text = value
         '''
         if self.checkbox.active != itemrow.checked:

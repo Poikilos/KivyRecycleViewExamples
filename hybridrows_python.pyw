@@ -75,7 +75,7 @@ def echo2(msg):
 
 class ItemRow(RecycleDataViewBehavior, BoxLayout):
     key = StringProperty()
-    checked = BooleanProperty()
+    mark = BooleanProperty()
 
     def __init__(self, **kwargs):
         # ^ kwargs=={} by default, and self.key is "" at this point.
@@ -93,8 +93,8 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         self.add_widget(button)
 
         checkbox = CheckBox(
-            active=self.checked,
-            on_release=lambda this_cb: self.on_checked_changed(self),
+            active=self.mark,
+            on_release=lambda this_cb: self.on_checkbox_pressed(self),
             size_hint_x=.1,
         )
         # ^ If not using a lambda, the param will be this checkbox.
@@ -115,42 +115,42 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         # ^ The key is NOT for the value being added, but clicked.
         app = App.get_running_app()
         entry = {
-            'checked': False,
+            'mark': False,
             'key': app.generate_key(),
         }
         app.rv.rv_data.append(entry)
 
-    def on_checked_changed(self, itemrow):
+    def on_checkbox_pressed(self, itemrow):
         '''
         The checkbox changed the value, so update the data source
-        (self.checked hasn't changed yet).
+        (self.mark hasn't changed yet).
         '''
         app = App.get_running_app()
-        echo2("on_checked_changed({})".format(type(itemrow).__name__))
-        echo2("- self.key={} checked={}"
-              "".format(self.key, self.checked))
-        echo2("- itemrow.key={} checked={}"
-              "".format(itemrow.key, itemrow.checked))
+        echo2("on_checkbox_pressed({})".format(type(itemrow).__name__))
+        echo2("- self.key={} mark={}"
+              "".format(self.key, self.mark))
+        echo2("- itemrow.key={} mark={}"
+              "".format(itemrow.key, itemrow.mark))
         echo2("- data={}".format(app.rv.rv_data))
-        self.checked = itemrow.checkbox.active
+        self.mark = itemrow.checkbox.active
         if "{}".format(itemrow.key) == "":
             echo2("- skipped (no key)")
             return
-        app.rv.get_row(itemrow.key)['checked'] = itemrow.checked
+        app.rv.get_row(itemrow.key)['mark'] = itemrow.mark
 
-    def on_checked(self, itemrow, value):
+    def on_mark(self, itemrow, value):
         '''
-        The data source changed the value, or the checked property
+        The data source changed the value, or the mark property
         changed for some other reason, so change the checkbox.
         '''
         app = App.get_running_app()
-        key_checked = None
+        linked_mark = None
         if "{}".format(itemrow.key) != "":
-            key_checked = app.rv.get_row(itemrow.key)['checked']
-        echo2("on_checked(itemrow.key={}, {}) self.checkbox.active={}"
-              " [{}]['checked']={}"
+            linked_mark = app.rv.get_row(itemrow.key)['mark']
+        echo2("on_mark(itemrow.key={}, {}) self.checkbox.active={}"
+              " [{}]['mark']={}"
               "".format(itemrow.key, value, self.checkbox.active,
-                        itemrow.key, key_checked))
+                        itemrow.key, linked_mark))
         if self.checkbox.active != value:
             echo2("- self.checkbox.active=value")
             self.checkbox.active = value
@@ -159,26 +159,26 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
             # Key is blank while being created, so this isn't a press,
             # but the checkbox still needs to change.
             pass
-        elif app.rv.get_row(itemrow.key)['checked'] != value:
-            echo2("- app.rv.get_row(itemrow.key)['checked']=value")
-            app.rv.get_row(itemrow.key)['checked'] = value
+        elif app.rv.get_row(itemrow.key)['mark'] != value:
+            echo2("- app.rv.get_row(itemrow.key)['mark']=value")
+            app.rv.get_row(itemrow.key)['mark'] = value
 
     def on_key(self, itemrow, value):
         app = App.get_running_app()
         echo2("on_key(({}, {}), {})"
-              "".format(itemrow.key, itemrow.checked, value))
-        key_checked = None
+              "".format(itemrow.key, itemrow.mark, value))
+        linked_mark = None
         if "{}".format(itemrow.key) != "":
-            key_checked = app.rv.get_row(itemrow.key)['checked']
-        echo2("on_checked(itemrow.key={}, {}) self.checkbox.active={}"
-              " [{}]['checked']={}"
+            linked_mark = app.rv.get_row(itemrow.key)['mark']
+        echo2("on_mark(itemrow.key={}, {}) self.checkbox.active={}"
+              " [{}]['mark']={}"
               "".format(itemrow.key, value, self.checkbox.active,
                         itemrow.key,
-                        key_checked))
+                        linked_mark))
         self.label.text = value
         '''
-        if self.checkbox.active != itemrow.checked:
-            self.checkbox.active = itemrow.checked
+        if self.checkbox.active != itemrow.mark:
+            self.checkbox.active = itemrow.mark
             echo1("  fixing data:{}".format(app.rv.data))
         '''
 
@@ -286,7 +286,7 @@ class HybridRowsApp(App):
         for i in range(3):
             self.rv.rv_data.append({
                 'key': self.generate_key(),
-                'checked': True,
+                'mark': True,
             })
 
         rv_layout = RecycleGridLayout()

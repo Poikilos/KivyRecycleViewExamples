@@ -18,8 +18,8 @@ kv = '''
 # attributes of the widget.
     CheckBox:
         id: checkbox
-        active: root.active
-        on_release: root.on_checked_changed(root)
+        active: root.mark
+        on_release: root.on_checkbox_pressed(root)
     Button:
         text: root.right_text
         on_release: print(f'{self.text} pressed')
@@ -50,14 +50,14 @@ BoxLayout:
 
 class TwoButtons(BoxLayout):  # The viewclass definitions, and property definitions.
     index = NumericProperty()
-    active = BooleanProperty()
+    mark = BooleanProperty()
     right_text = StringProperty()
 
-    def on_checked_changed(self, twobuttons):
-        self.active = twobuttons.ids.checkbox.active
+    def on_checkbox_pressed(self, twobuttons):
+        self.mark = twobuttons.ids.checkbox.active
         app = App.get_running_app()
-        app.root.ids.rv.rv_data_list[self.index]['active'] = self.active
-        print(f'{self.right_text} checked={self.active}')
+        app.root.ids.rv.rv_data_list[self.index]['mark'] = self.mark
+        print(f'{self.right_text} checked={self.mark}')
 
 
 class RV(RecycleView):
@@ -68,17 +68,17 @@ class RV(RecycleView):
         for i in range(2):
             self.rv_data_list.append({
                 'index': len(self.rv_data_list),
-                'active': True,
+                'mark': True,
                 'right_text': f'Right {i}',
             })
         '''
         This list comprehension is used to create the data list for
         this simple example.
         The data created looks like:
-        [{'index': 0, 'active': True, 'right_text': 'Right 0'},
-        {'index': 1, 'active': True, 'right_text': 'Right 1'},
-        {'index': 2, 'active': True, 'right_text': 'Right 2'},
-        {'index': 3, 'active': True...
+        [{'index': 0, 'mark': True, 'right_text': 'Right 0'},
+        {'index': 1, 'mark': True, 'right_text': 'Right 1'},
+        {'index': 2, 'mark': True, 'right_text': 'Right 2'},
+        {'index': 3, 'mark': True...
         notice the keys in the dictionary correspond to the kivy
         properties in the TwoButtons class. The data needs to be in
         this kind of list of dictionary formats.  The RecycleView
@@ -94,7 +94,7 @@ class RV(RecycleView):
         index = len(self.rv_data_list)
         self.rv_data_list.append({
             'index': index,
-            'active': False,
+            'mark': False,
             'right_text': f'Added Right {index}',
         })
 
