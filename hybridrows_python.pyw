@@ -13,7 +13,7 @@ Changes:
 Known issues:
 - (main issue) The window is blank since assigning viewclass fails.
   The constructor for ItemRow is never called (see comments).
-- Binding the data to rv_data ListProperty doesn't work (see comments).
+- Binding the data to rv_data_list ListProperty doesn't work (see comments).
 - Binding the bgRect size to the Screen or ScreenManager size doesn't
   work (see comments).
 '''
@@ -118,7 +118,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
             'mark': False,
             'key': app.generate_key(),
         }
-        app.rv.rv_data.append(entry)
+        app.rv.rv_data_list.append(entry)
 
     def on_checkbox_pressed(self, itemrow):
         '''
@@ -131,7 +131,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
               "".format(self.key, self.mark))
         echo2("- itemrow.key={} mark={}"
               "".format(itemrow.key, itemrow.mark))
-        echo2("- data={}".format(app.rv.rv_data))
+        echo2("- data={}".format(app.rv.rv_data_list))
         self.mark = itemrow.checkbox.active
         if "{}".format(itemrow.key) == "":
             echo2("- skipped (no key)")
@@ -184,7 +184,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
 
 
 class KeyedView(RecycleView):
-    rv_data = ListProperty()
+    rv_data_list = ListProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -195,7 +195,7 @@ class KeyedView(RecycleView):
         self.viewclass = ItemRow
 
     def get_row(self, key):
-        return self.rv_data[self.find_row(key)]
+        return self.rv_data_list[self.find_row(key)]
 
     def find_row(self, key):
         if not isinstance(key, str):
@@ -203,16 +203,16 @@ class KeyedView(RecycleView):
                 "key must be str but is {} {}"
                 "".format(type(key).__name__, key)
             )
-        for i in range(len(self.rv_data)):
-            if self.rv_data[i]['key'] == key:
+        for i in range(len(self.rv_data_list)):
+            if self.rv_data_list[i]['key'] == key:
                 return i
         return -1
 
-    def on_rv_data(self, keyedview, data):
-        echo2("* on_rv_data(keyedview, data)")
-        echo2("  - rv_data={}".format(data))
+    def on_rv_data_list(self, keyedview, data):
+        echo2("* on_rv_data_list(keyedview, data)")
+        echo2("  - rv_data_list={}".format(data))
         app = App.get_running_app()
-        app.rv.data = self.rv_data
+        app.rv.data = self.rv_data_list
 
 
 class ItemScreen(Screen):
@@ -285,7 +285,7 @@ class HybridRowsApp(App):
         self.sm = ItemScreens()  # ScreenManager()
         self.rv = KeyedView()
         for i in range(3):
-            self.rv.rv_data.append({
+            self.rv.rv_data_list.append({
                 'key': self.generate_key(),
                 'mark': True,
             })

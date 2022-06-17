@@ -13,7 +13,7 @@ Changes:
 Known issues:
 - (main issue) The window is blank since assigning viewclass fails.
   The constructor for ItemRow is never called (see comments).
-- Binding the data to rv_data ListProperty doesn't work (see comments).
+- Binding the data to rv_data_list ListProperty doesn't work (see comments).
 - Binding the bgRect size to the Screen or ScreenManager size doesn't
   work (see comments).
 '''
@@ -114,7 +114,7 @@ class ItemRow(BoxLayout):
             'mark': False,
             'key': app.generate_key(),
         }
-        app.rv.rv_data.append(entry)
+        app.rv.rv_data_list.append(entry)
 
     def on_checkbox_pressed(self, itemrow):
         '''
@@ -127,7 +127,7 @@ class ItemRow(BoxLayout):
               "".format(self.key, self.mark))
         echo2("- itemrow.key={} mark={}"
               "".format(itemrow.key, itemrow.mark))
-        echo2("- data={}".format(app.rv.rv_data))
+        echo2("- data={}".format(app.rv.rv_data_list))
         self.mark = itemrow.checkbox.active
         if "{}".format(itemrow.key) == "":
             echo2("- skipped (no key)")
@@ -182,7 +182,7 @@ class ItemRow(BoxLayout):
 
 
 class KeyedView(RecycleView):
-    rv_data = ListProperty()
+    rv_data_list = ListProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -196,11 +196,11 @@ class KeyedView(RecycleView):
                 'mark': True,
             })
             echo1("* appended {}".format(key))
-        self.rv_data = mylist
+        self.rv_data_list = mylist
         '''
         for i in range(3):
             key = app.generate_key()
-            self.rv_data.append({
+            self.rv_data_list.append({
                 'key': key,
                 'mark': True,
             })
@@ -213,7 +213,7 @@ class KeyedView(RecycleView):
         self.viewclass = ItemRow
 
     def get_row(self, key):
-        return self.rv_data[self.find_row(key)]
+        return self.rv_data_list[self.find_row(key)]
 
     def find_row(self, key):
         if not isinstance(key, str):
@@ -221,15 +221,15 @@ class KeyedView(RecycleView):
                 "key must be str but is {} {}"
                 "".format(type(key).__name__, key)
             )
-        for i in range(len(self.rv_data)):
-            if self.rv_data[i]['key'] == key:
+        for i in range(len(self.rv_data_list)):
+            if self.rv_data_list[i]['key'] == key:
                 return i
         return -1
 
-    def on_rv_data(self, keyedview, data):
-        echo2("* on_rv_data(keyedview, data)")
-        echo2("  - rv_data={}".format(data))
-        self.data = self.rv_data
+    def on_rv_data_list(self, keyedview, data):
+        echo2("* on_rv_data_list(keyedview, data)")
+        echo2("  - rv_data_list={}".format(data))
+        self.data = self.rv_data_list
         # echo2("dir(self): {}".format(dir(self)))
         # self.view_adapter.make_views_dirty()
         # ^ Doesn't fix checkboxes if whole list is replaced.
@@ -248,8 +248,8 @@ class KeyedView(RecycleView):
 
         # app = App.get_running_app()
         for i in range(len(data)):
-            if self.rv_data[i] != data[i]:
-                self.rv_data[i] = data[i]
+            if self.rv_data_list[i] != data[i]:
+                self.rv_data_list[i] = data[i]
             # else avoid infinite loop
         '''
         # Clock.schedule_once(self.read_data, .1)

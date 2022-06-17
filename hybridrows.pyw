@@ -63,7 +63,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         echo2("add_data(itemrow.key={})".format(itemrow.key))
         app = App.get_running_app()
         new_key = app.generate_key()
-        app.rv_data.append({
+        app.rv_data_list.append({
             'key': new_key,
             'mark': False,
         })
@@ -79,15 +79,15 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
               "".format(self.key, self.mark))
         echo2("- itemrow.key={} mark={}"
               "".format(itemrow.key, itemrow.mark))
-        echo2("- data={}".format(app.rv_data))
+        echo2("- data={}".format(app.rv_data_list))
         echo2("- checkbox.active={}"
               "".format(itemrow.ids.checkbox.active))
         self.mark = itemrow.ids.checkbox.active
         app.get_row(itemrow.key)['mark'] = itemrow.ids.checkbox.active
-        # ^ This works (app.rv_data at the correct index changes) but
+        # ^ This works (app.rv_data_list at the correct index changes) but
         #   upon adding a new row, the value is reset!
         # print('{} mark={}'.format(self.right_text, self.mark))
-        print('app.rv_data:{}'.format(app.rv_data))
+        print('app.rv_data_list:{}'.format(app.rv_data_list))
 
     def on_mark(self, itemrow, value):
         '''
@@ -121,7 +121,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
 
 
 class HybridRowsApp(App):
-    rv_data = ListProperty()
+    rv_data_list = ListProperty()
     next_key_i = NumericProperty()
 
     def __init__(self, **kwargs):
@@ -133,23 +133,23 @@ class HybridRowsApp(App):
                 'key': self.generate_key(),
                 'mark': True,
             })
-        self.rv_data = mylist
+        self.rv_data_list = mylist
         '''
         for i in range(3):
-            self.rv_data.append({
+            self.rv_data_list.append({
                 'key': self.generate_key(),
                 'mark': True,
             })
 
     def set_mark(self, key, value):
-        self.rv_data[self.find_row(key)] = value
+        self.rv_data_list[self.find_row(key)] = value
 
     def get_row(self, key):
-        return self.rv_data[self.find_row(key)]
+        return self.rv_data_list[self.find_row(key)]
 
     def find_row(self, key):
-        for i in range(len(self.rv_data)):
-            if self.rv_data[i]['key'] == key:
+        for i in range(len(self.rv_data_list)):
+            if self.rv_data_list[i]['key'] == key:
                 return i
         return -1
 
@@ -192,7 +192,7 @@ BoxLayout:
     RecycleView:
         id: rv
         viewclass: "ItemRow"
-        data: app.rv_data
+        data: app.rv_data_list
         RecycleGridLayout:
             cols: 1
             default_size: [0, dp(40)]
