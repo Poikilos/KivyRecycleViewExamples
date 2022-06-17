@@ -6,7 +6,9 @@ If you need to fix certain issues in your non-KV Python Kivy code quickly, you m
 - (2fc75c4)[https://github.com/poikilos/KivyRecycleViewExamples/commit/2fc75c46ad803a2863d908c5e16a6c6487b49b02] Set viewclass using Python.
 - (8e7127b)[https://github.com/poikilos/KivyRecycleViewExamples/commit/8e7127b6ddff2509212bdf06229d29bc38de1f68] Synchronize the key and label text using Python.
 - (8e7127b)[https://github.com/poikilos/KivyRecycleViewExamples/commit/8e7127b6ddff2509212bdf06229d29bc38de1f68] Set text color on a label.
-- (ec47d8c)[https://github.com/poikilos/KivyRecycleViewExamples/commit/ec47d8caabee9b8b3a240c98a56afec1a9bfa501] Feed data back into the ListProperty that acts as the data source.
+- (ec47d8c)[https://github.com/poikilos/KivyRecycleViewExamples/commit/ec47d8caabee9b8b3a240c98a56afec1a9bfa501] Feed data back into the ListProperty that acts as the data source. The following code changes in the commit are unrelated:
+  - `root = Builder.load_string(kv); return root` is no different than `return Builder.load_string(kv)`. `app.root` is generated automatically regardless, and root in the case of this code is an ambiguous local variable that is unnecessary.
+  - `Clock.schedule_interval(self.dump_values, 1)` and the `dump_values` method are only for debugging purposes, to prove that the ListProperty was changed by `on_checked_changed`
 
 
 ## What doesn't work

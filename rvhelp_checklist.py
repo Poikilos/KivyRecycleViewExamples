@@ -71,15 +71,21 @@ class RV(RecycleView):
                 'active': True,
                 'right_text': f'Right {i}',
             })
-        # This list comprehension is used to create the data list for this simple example.
-        # The data created looks like:
-        # [{'left_text': 'Left 0', 'right_text': 'Right 0'}, {'left_text': 'Left 1', 'right_text': 'Right 1'},
-        # {'left_text': 'Left 2', 'right_text': 'Right 2'}, {'left_text': 'Left 3'},...
-        # notice the keys in the dictionary correspond to the kivy properties in the TwoButtons class.
-        # The data needs to be in this kind of list of dictionary formats.  The RecycleView instances the
-        # widgets, and populates them with data from this list.
-
-        Clock.schedule_interval(self.dump_values, 1)
+        '''
+        This list comprehension is used to create the data list for
+        this simple example.
+        The data created looks like:
+        [{'index': 0, 'active': True, 'right_text': 'Right 0'},
+        {'index': 1, 'active': True, 'right_text': 'Right 1'},
+        {'index': 2, 'active': True, 'right_text': 'Right 2'},
+        {'index': 3, 'active': True...
+        notice the keys in the dictionary correspond to the kivy
+        properties in the TwoButtons class. The data needs to be in
+        this kind of list of dictionary formats.  The RecycleView
+        instances the widgets, and populates them with data from this
+        list.
+        '''
+        # Clock.schedule_interval(self.dump_values, 10)
 
     def dump_values(self, passed_seconds):
         print("* dump_values data={}".format(self.data))

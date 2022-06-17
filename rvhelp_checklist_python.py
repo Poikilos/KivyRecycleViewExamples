@@ -20,16 +20,22 @@ class TwoButtons(BoxLayout):  # The viewclass definitions, and property definiti
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        active_cb = CheckBox(active=self.active, on_release=lambda x: self.on_checked_changed(x))
+        active_cb = CheckBox(
+            active=self.active,
+            on_release=lambda cb: self.on_checked_changed(self),
+        )
         self.active_cb = active_cb
         self.add_widget(active_cb)
-        right_button = Button(text=self.right_text, on_release=lambda x: print(f'{self.right_text} pressed'))
+        right_button = Button(
+            text=self.right_text,
+            on_release=lambda btn: print(f'{self.right_text} Button'),
+        )
         self.add_widget(right_button)
         self.right_button = right_button
 
     def on_checked_changed(self, twobuttons):
-        if self.active != twobuttons.active:
-            self.active = twobuttons.active
+        if self.active != twobuttons.active_cb.active:
+            self.active = twobuttons.active_cb.active
             app = App.get_running_app()
             app.root.rv.rv_data_list[self.index]['active'] = self.active
         # else don't trigger an infinite loop.
@@ -69,10 +75,18 @@ class RBL(RecycleBoxLayout):
 class RV(RecycleView):
     rv_data_list = ListProperty()  # A list property is used to hold the data for the recycleview, see the kv code
 
-    def on_rv_data_list(self, *args):
+    def on_rv_data_list(self, rv, data_list):
+        '''
+        If the entire list is replaced, that would breaks things
+        (checkboxes aren't updated)! Therefore, modify rv_data_list
+        rather than replacing it (or iterate through the widgets and
+        set them using the data_list).
+        '''
+        print("on_rv_data_list(rv, data_list)")
         self.data = self.rv_data_list
 
     def __init__(self, **kwargs):
+        self.init_done = False
         super().__init__(**kwargs)
         for i in range(2):
             self.rv_data_list.append({
@@ -80,19 +94,27 @@ class RV(RecycleView):
                 'active': True,
                 'right_text': f'Right {i}',
             })
-        # This list comprehension is used to create the data list for this simple example.
-        # The data created looks like:
-        # [{'left_text': 'Left 0', 'right_text': 'Right 0'}, {'left_text': 'Left 1', 'right_text': 'Right 1'},
-        # {'left_text': 'Left 2', 'right_text': 'Right 2'}, {'left_text': 'Left 3'},...
-        # notice the keys in the dictionary correspond to the kivy properties in the TwoButtons class.
-        # The data needs to be in this kind of list of dictionary formats.  The RecycleView instances the
-        # widgets, and populates them with data from this list.
+        '''
+        This list comprehension is used to create the data list for
+        this simple example.
+        The data created looks like:
+        [{'index': 0, 'active': True, 'right_text': 'Right 0'},
+        {'index': 1, 'active': True, 'right_text': 'Right 1'},
+        {'index': 2, 'active': True, 'right_text': 'Right 2'},
+        {'index': 3, 'active': True...
+        Notice that the keys in the dictionary correspond to the kivy
+        properties in the TwoButtons class. The data needs to be in
+        this kind of list of dictionary formats.  The RecycleView
+        instances the widgets, and populates them with data from this
+        list.
+        '''
         Clock.schedule_once(self.set_viewclass)  # schedule setting the viewclass
         self.scroll_type = ['bars', 'content']
         self.bar_width = 10
         self.add_widget(RBL())
 
-        Clock.schedule_interval(self.dump_values, 1)
+        # Clock.schedule_interval(self.dump_values, 10)
+        self.init_done = True
 
     def dump_values(self, passed_seconds):
         print("* dump_values data={}".format(self.data))
