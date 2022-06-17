@@ -11,7 +11,7 @@ from kivy.properties import (
 from kivy.clock import Clock
 
 kv = '''
-<TwoButtons>:
+<ItemRow>:
 # This class is used as the viewclass in the RecycleView
 # The means this widget will be instanced to view one element of data from the data list.
 # The RecycleView data list is a list of dictionaries.  The keys in the dictionary specify the
@@ -34,13 +34,13 @@ BoxLayout:
 
     RV:                          # A Reycleview
         id: rv
-        viewclass: 'TwoButtons'  # The view class is TwoButtons, defined above.
+        viewclass: 'ItemRow'  # The view class is ItemRow, defined above.
         data: self.rv_data_list  # the data is a list of dicts defined below in the RV class.
         scroll_type: ['bars', 'content']
         bar_width: 10
         RecycleBoxLayout:
             # This layout is used to hold the Recycle widgets
-            default_size: None, dp(48)   # This sets the height of the BoxLayout that holds a TwoButtons instance.
+            default_size: None, dp(48)   # This sets the height of the BoxLayout that holds a ItemRow instance.
             default_size_hint: 1, None
             size_hint_y: None
             height: self.minimum_height   # To scroll you need to set the layout height.
@@ -48,7 +48,7 @@ BoxLayout:
 '''
 
 
-class TwoButtons(BoxLayout):  # The viewclass definitions, and property definitions.
+class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions.
     index = NumericProperty()
     mark = BooleanProperty()
     right_text = StringProperty()
@@ -80,7 +80,7 @@ class RV(RecycleView):
         {'index': 2, 'mark': True, 'right_text': 'Right 2'},
         {'index': 3, 'mark': True...
         notice the keys in the dictionary correspond to the kivy
-        properties in the TwoButtons class. The data needs to be in
+        properties in the ItemRow class. The data needs to be in
         this kind of list of dictionary formats.  The RecycleView
         instances the widgets, and populates them with data from this
         list.

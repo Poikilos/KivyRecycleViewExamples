@@ -7,7 +7,7 @@ from kivy.properties import StringProperty, ListProperty
 from kivy.clock import Clock
 
 
-class TwoButtons(BoxLayout):  # The viewclass definitions, and property definitions.
+class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions.
     left_text = StringProperty()
     right_text = StringProperty()
 
@@ -50,7 +50,7 @@ class RV(RecycleView):
         # The data created looks like:
         # [{'left_text': 'Left 0', 'right_text': 'Right 0'}, {'left_text': 'Left 1', 'right_text': 'Right 1'},
         # {'left_text': 'Left 2', 'right_text': 'Right 2'}, {'left_text': 'Left 3'},...
-        # notice the keys in the dictionary correspond to the kivy properties in the TwoButtons class.
+        # notice the keys in the dictionary correspond to the kivy properties in the ItemRow class.
         # The data needs to be in this kind of list of dictionary formats.  The RecycleView instances the
         # widgets, and populates them with data from this list.
         Clock.schedule_once(self.set_viewclass)  # schedule setting the viewclass
@@ -59,7 +59,7 @@ class RV(RecycleView):
         self.add_widget(RBL())
 
     def set_viewclass(self, _):
-        self.viewclass = TwoButtons
+        self.viewclass = ItemRow
 
     def add(self, *args):
         l = len(self.rv_data_list)

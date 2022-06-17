@@ -13,7 +13,7 @@ from kivy.properties import (
 from kivy.clock import Clock
 
 
-class TwoButtons(BoxLayout):  # The viewclass definitions, and property definitions.
+class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions.
     index = NumericProperty()
     mark = BooleanProperty()
     right_text = StringProperty()
@@ -93,7 +93,7 @@ class RV(RecycleView):
         {'index': 2, 'mark': True, 'right_text': 'Right 2'},
         {'index': 3, 'mark': True...
         Notice that the keys in the dictionary correspond to the kivy
-        properties in the TwoButtons class. The data needs to be in
+        properties in the ItemRow class. The data needs to be in
         this kind of list of dictionary formats.  The RecycleView
         instances the widgets, and populates them with data from this
         list.
@@ -107,7 +107,7 @@ class RV(RecycleView):
         self.init_done = True
 
     def set_viewclass(self, _):
-        self.viewclass = TwoButtons
+        self.viewclass = ItemRow
 
     def on_rv_data_list(self, rv, data_list):
         '''
