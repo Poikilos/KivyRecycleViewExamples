@@ -57,16 +57,16 @@ def echo0(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def echo1(msg):
+def echo1(*args, **kwargs):
     if verbose < 1:
         return
-    echo0("{}".format(msg))
+    print(*args, file=sys.stderr, **kwargs)
 
 
-def echo2(msg):
+def echo2(*args, **kwargs):
     if verbose < 2:
         return
-    echo0("{}".format(msg))
+    print(*args, file=sys.stderr, **kwargs)
 
 
 class ItemRow(BoxLayout):
