@@ -44,7 +44,7 @@ from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 
-verbose = 2
+verbosity = 2
 
 # NOTE: When using kivy, args get erased :(
 #   (len is 1: only the py* file is in sys.argv).
@@ -52,9 +52,9 @@ for argI in range(1, len(sys.argv)):
     arg = sys.argv[argI]
     if arg.startswith("--"):
         if arg == "--verbose":
-            verbose = 1
+            verbosity = 1
         elif arg == "--debug":
-            verbose = 2
+            verbosity = 2
 
 
 def echo0(*args, **kwargs):
@@ -62,13 +62,13 @@ def echo0(*args, **kwargs):
 
 
 def echo1(*args, **kwargs):
-    if verbose < 1:
+    if verbosity < 1:
         return
     print(*args, file=sys.stderr, **kwargs)
 
 
 def echo2(*args, **kwargs):
-    if verbose < 2:
+    if verbosity < 2:
         return
     print(*args, file=sys.stderr, **kwargs)
 
