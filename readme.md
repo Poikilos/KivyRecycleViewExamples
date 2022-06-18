@@ -2,18 +2,18 @@
 The purpose of this repo is to track the correct way to use the Kivy RecycleView which replaces the ListView. This repo is based on rv_help by ElliotG including a Python version added for https://groups.google.com/g/kivy-users/c/P0c44_otKcI?pli=1
 
 If you need to fix certain issues in your non-KV Python Kivy code quickly, you may want to look at the following commits:
-- (2fc75c4)[https://github.com/poikilos/KivyRecycleViewExamples/commit/2fc75c46ad803a2863d908c5e16a6c6487b49b02] Synchronize rv.data with rv_data_list using Python (handle a change event for a property, and in this case, set a RecycleView's data to a ListProperty).
-- (2fc75c4)[https://github.com/poikilos/KivyRecycleViewExamples/commit/2fc75c46ad803a2863d908c5e16a6c6487b49b02] Set viewclass using Python.
-- (8e7127b)[https://github.com/poikilos/KivyRecycleViewExamples/commit/8e7127b6ddff2509212bdf06229d29bc38de1f68] Synchronize the key and label text using Python.
-- (8e7127b)[https://github.com/poikilos/KivyRecycleViewExamples/commit/8e7127b6ddff2509212bdf06229d29bc38de1f68] Set text color on a label.
-- (ec47d8c)[https://github.com/poikilos/KivyRecycleViewExamples/commit/ec47d8caabee9b8b3a240c98a56afec1a9bfa501] Feed data back into the ListProperty that acts as the data source. The following code changes in the commit are unrelated:
+- [2fc75c4](https://github.com/poikilos/KivyRecycleViewExamples/commit/2fc75c46ad803a2863d908c5e16a6c6487b49b02) Synchronize rv.data with rv_data_list using Python (handle a change event for a property, and in this case, set a RecycleView's data to a ListProperty).
+- [2fc75c4](https://github.com/poikilos/KivyRecycleViewExamples/commit/2fc75c46ad803a2863d908c5e16a6c6487b49b02) Set viewclass using Python.
+- [8e7127b](https://github.com/poikilos/KivyRecycleViewExamples/commit/8e7127b6ddff2509212bdf06229d29bc38de1f68) Synchronize the key and label text using Python.
+- [8e7127b](https://github.com/poikilos/KivyRecycleViewExamples/commit/8e7127b6ddff2509212bdf06229d29bc38de1f68) Set text color on a label.
+- [ec47d8c](https://github.com/poikilos/KivyRecycleViewExamples/commit/ec47d8caabee9b8b3a240c98a56afec1a9bfa501) Feed data back into the ListProperty that acts as the data source. The following code changes in the commit are unrelated:
   - `root = Builder.load_string(kv); return root` is no different than `return Builder.load_string(kv)`. `app.root` is generated automatically regardless, and root in the case of this code is an ambiguous local variable that is unnecessary.
   - `Clock.schedule_interval(self.dump_values, 1)` and the `dump_values` method are only for debugging purposes, to prove that the ListProperty was changed by `on_checkbox_pressed`
-- (c472a74)[https://github.com/poikilos/KivyRecycleViewExamples/commit/c472a745003449876827b90ac00a83ac834bcaa8] Synchronize data between RecycleView actions and data (See new comments in the commit for how): Set row's data to prevent data from randomly changing then reverting; Set the related ListProperty entry to prevent RecycleView's linked data & checkbox from reverting.
+- [c472a74](https://github.com/poikilos/KivyRecycleViewExamples/commit/c472a745003449876827b90ac00a83ac834bcaa8) Synchronize data between RecycleView actions and data (See new comments in the commit for how): Set row's data to prevent data from randomly changing then reverting; Set the related ListProperty entry to prevent RecycleView's linked data & checkbox from reverting.
 
 
 ## What doesn't work
-This code was removed. The commits above are correct, whereas the code (included below for reference) was removed because it doesn't work:
+The error messages and old code removed from this project are documented below for reference to help you find the fixes above using a web search:
 ```Python
 class ItemRow(RecycleDataViewBehavior, BoxLayout):
     def __init__(self, **kwargs):
