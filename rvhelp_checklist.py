@@ -32,7 +32,7 @@ BoxLayout:
         text: 'Add widget to RV list'
         on_release: rv.add()
 
-    RV:                          # A Reycleview
+    RV:                          # A RecycleView
         id: rv
         viewclass: 'ItemRow'  # The view class is ItemRow, defined above.
         data: self.rv_data_list  # the data is a list of dicts defined below in the RV class.
