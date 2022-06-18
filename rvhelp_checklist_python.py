@@ -36,8 +36,12 @@ class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions
     def on_checkbox_pressed(self, itemrow):
         if self.mark != itemrow.mark_cb.active:
             self.mark = itemrow.mark_cb.active
+            # ^ Without this, the values flip around randomly to
+            #   different rows on data load (add row), then on a
+            #   successive data load, revert to the original value.
             app = App.get_running_app()
             app.root.rv.rv_data_list[self.index]['mark'] = self.mark
+            # ^ Without this, data load (add row) reverts the checkbox.
         # else don't trigger an infinite loop.
 
     def on_mark(self, itemrow, v):
