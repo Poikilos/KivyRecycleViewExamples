@@ -52,15 +52,15 @@ class ItemRow(BoxLayout):  # The viewclass definitions, and property definitions
         but that's ok because the checkbox should only be set if the
         mark BooleanProperty changes externally.
         '''
-        print("on_mark(itemrow, {}) self.right_button.text:{}"
-              "".format(v, self.right_button.text))
+        print("on_mark({}, {})"
+              "".format(itemrow.right_button.text, v))
         if itemrow.mark_cb.active != v:
             itemrow.mark_cb.active = v
         # else don't trigger infinite loop
 
     def on_right_text(self, obj, v):
-        print("on_right_text({}, {}) self.right_button.text:{}"
-              "".format(obj, v, self.right_button.text))
+        print('on_right_text("{}", "{}")'
+              ''.format(self.right_button.text, v))
         self.right_button.text = v
 
 
@@ -82,7 +82,7 @@ class RV(RecycleView):
     def __init__(self, **kwargs):
         self.init_done = False
         super().__init__(**kwargs)
-        for i in range(2):
+        for i in range(3):
             self.rv_data_list.append({
                 'index': len(self.rv_data_list),
                 'mark': True,
@@ -120,6 +120,7 @@ class RV(RecycleView):
         rather than replacing it (or iterate through the widgets and
         set them using the data_list).
         '''
+        print("")
         print("on_rv_data_list(rv, data_list)")
         self.data = self.rv_data_list
 

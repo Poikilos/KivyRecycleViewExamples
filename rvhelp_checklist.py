@@ -65,7 +65,7 @@ class RV(RecycleView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        for i in range(2):
+        for i in range(3):
             self.rv_data_list.append({
                 'index': len(self.rv_data_list),
                 'mark': True,
