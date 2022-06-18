@@ -9,6 +9,7 @@ If you need to fix certain issues in your non-KV Python Kivy code quickly, you m
 - (ec47d8c)[https://github.com/poikilos/KivyRecycleViewExamples/commit/ec47d8caabee9b8b3a240c98a56afec1a9bfa501] Feed data back into the ListProperty that acts as the data source. The following code changes in the commit are unrelated:
   - `root = Builder.load_string(kv); return root` is no different than `return Builder.load_string(kv)`. `app.root` is generated automatically regardless, and root in the case of this code is an ambiguous local variable that is unnecessary.
   - `Clock.schedule_interval(self.dump_values, 1)` and the `dump_values` method are only for debugging purposes, to prove that the ListProperty was changed by `on_checkbox_pressed`
+- (c472a74)[https://github.com/poikilos/KivyRecycleViewExamples/commit/c472a745003449876827b90ac00a83ac834bcaa8] Synchronize data between RecycleView actions and data (See new comments in the commit for how): Set row's data to prevent data from randomly changing then reverting; Set the related ListProperty entry to prevent RecycleView's linked data & checkbox from reverting.
 
 
 ## What doesn't work
