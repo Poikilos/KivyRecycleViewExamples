@@ -132,11 +132,16 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         echo2("- itemrow.key={} mark={}"
               "".format(itemrow.key, itemrow.mark))
         echo2("- data={}".format(app.rv.rv_data_list))
-        self.mark = itemrow.checkbox.active
-        if "{}".format(itemrow.key) == "":
-            echo2("- skipped (no key)")
-            return
-        app.rv.get_row(itemrow.key)['mark'] = itemrow.mark
+        if self.mark != itemrow.checkbox.active:
+            self.mark = itemrow.checkbox.active
+            # ^ Without this, the values flip around randomly to
+            #   different rows on data load (add row), then on a
+            #   successive data load, revert to the original value.
+            if "{}".format(itemrow.key) == "":
+                echo2("- skipped (no key)")
+                return
+            app.rv.get_row(itemrow.key)['mark'] = itemrow.mark
+            # ^ Without this, data load (add row) reverts the checkbox.
 
     def on_mark(self, itemrow, value):
         '''
@@ -154,6 +159,7 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         if self.checkbox.active != value:
             echo2("- self.checkbox.active=value")
             self.checkbox.active = value
+        '''
         if "{}".format(itemrow.key) == "":
             echo2("- skipped (no key)")
             # Key is blank while being created, so this isn't a press,
@@ -162,6 +168,9 @@ class ItemRow(RecycleDataViewBehavior, BoxLayout):
         elif app.rv.get_row(itemrow.key)['mark'] != value:
             echo2("- app.rv.get_row(itemrow.key)['mark']=value")
             app.rv.get_row(itemrow.key)['mark'] = value
+        '''
+        # value (self.mark) flows from rv.data, so don't change data
+        # based on value or feedback could make data incorrect!
 
     def on_key(self, itemrow, value):
         app = App.get_running_app()
